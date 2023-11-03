@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  chef:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "food"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "qwerty"
+    volumes:
+      - ./data:/var/lib/postgresql/food
+    ports:
+      - "5432:5432"
