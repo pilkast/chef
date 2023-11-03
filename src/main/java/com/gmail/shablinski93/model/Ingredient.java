@@ -1,4 +1,4 @@
-package com.gmail.shablinski93;
+package com.gmail.shablinski93.model;
 
 import lombok.*;
 

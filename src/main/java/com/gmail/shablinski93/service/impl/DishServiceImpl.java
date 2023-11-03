@@ -1,7 +1,7 @@
 package com.gmail.shablinski93.service.impl;
 
-import com.gmail.shablinski93.Dish;
-import com.gmail.shablinski93.Ingredient;
+import com.gmail.shablinski93.model.Dish;
+import com.gmail.shablinski93.model.Ingredient;
 import com.gmail.shablinski93.repository.ConnectionRepository;
 import com.gmail.shablinski93.repository.DishRepository;
 import com.gmail.shablinski93.repository.impl.ConnectionRepositoryImpl;

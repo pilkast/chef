@@ -1,9 +1,7 @@
-package com.gmail.shablinski93;
+package com.gmail.shablinski93.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.UUID;
 
 @Data

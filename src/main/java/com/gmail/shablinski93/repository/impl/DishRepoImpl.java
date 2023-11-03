@@ -1,8 +1,8 @@
 package com.gmail.shablinski93.repository.impl;
 
-import com.gmail.shablinski93.Dish;
-import com.gmail.shablinski93.DishIngredient;
-import com.gmail.shablinski93.Ingredient;
+import com.gmail.shablinski93.model.Dish;
+import com.gmail.shablinski93.model.DishIngredient;
+import com.gmail.shablinski93.model.Ingredient;
 import com.gmail.shablinski93.repository.DishRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -104,7 +104,7 @@ public class DishRepoImpl implements DishRepository {
             preparedStatement.setString(1, dishId);
             ResultSet resultSet = preparedStatement.executeQuery();
             List<UUID> list = new ArrayList<>();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 String item = resultSet.getString("main_ingredient_id");
                 list.add(UUID.fromString(item));
             }
@@ -117,7 +117,6 @@ public class DishRepoImpl implements DishRepository {
 
     @Override
     public List<Ingredient> getIngredientsByIdForDish(Connection connection, List<UUID> ingredientsIdForDish) {
-//        List<Ingredient> ingredients = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement
                 (SELECT_FROM_INGREDIENTS_BY_ID)) {
             ResultSet resultSet = null;
@@ -138,8 +137,7 @@ public class DishRepoImpl implements DishRepository {
     }
 
     @Override
-    public DishIngredient creatingDependence(Connection connection, DishIngredient dishIngredient, Dish
-            dish, Ingredient ingredient) {
+    public DishIngredient creatingDependence(Connection connection, DishIngredient dishIngredient, Dish dish, Ingredient ingredient) {
         return null;
     }
 
@@ -178,7 +176,6 @@ public class DishRepoImpl implements DishRepository {
             dish.setDishName(resultSet.getString("dishname"));
             dish.setCaloriesCount(resultSet.getInt("caloriescount"));
             dish.setIngredientCount(resultSet.getInt("ingredientcount"));
-            //      dish.setIngredients(resultSetIngredient(get));
 
             dishes.add(dish);
         }

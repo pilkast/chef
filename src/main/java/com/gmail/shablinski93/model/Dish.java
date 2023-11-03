@@ -1,6 +1,9 @@
-package com.gmail.shablinski93;
+package com.gmail.shablinski93.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,8 +22,8 @@ public class Dish implements Serializable {
     @Id
     private UUID dishId;
     private String dishName;
-    private Integer caloriesCount;      //поменять на инте
-    private Integer ingredientCount;     // тзмгнтьб
+    private Integer caloriesCount;
+    private Integer ingredientCount;
     @ManyToMany
     @JoinTable(name = "dish_ingredient",
             joinColumns = @JoinColumn(name = "mainDishId"),

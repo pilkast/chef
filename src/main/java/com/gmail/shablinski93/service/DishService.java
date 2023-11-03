@@ -1,7 +1,7 @@
 package com.gmail.shablinski93.service;
 
-import com.gmail.shablinski93.Dish;
-import com.gmail.shablinski93.Ingredient;
+import com.gmail.shablinski93.model.Dish;
+import com.gmail.shablinski93.model.Ingredient;
 
 import java.io.IOException;
 import java.util.List;

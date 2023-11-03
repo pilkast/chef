@@ -1,8 +1,8 @@
 package com.gmail.shablinski93.repository;
 
-import com.gmail.shablinski93.Dish;
-import com.gmail.shablinski93.DishIngredient;
-import com.gmail.shablinski93.Ingredient;
+import com.gmail.shablinski93.model.Dish;
+import com.gmail.shablinski93.model.DishIngredient;
+import com.gmail.shablinski93.model.Ingredient;
 
 import java.sql.Connection;
 import java.util.List;

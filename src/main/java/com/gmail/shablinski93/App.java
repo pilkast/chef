@@ -1,5 +1,6 @@
 package com.gmail.shablinski93;
 
+import com.gmail.shablinski93.model.Dish;
 import com.gmail.shablinski93.service.impl.DishServiceImpl;
 
 import java.io.BufferedReader;
@@ -21,8 +22,8 @@ public class App {
             System.out.println("2.Добавить блюдо");
             System.out.println("3.Показать ");
             System.out.println("4.Посмотреть блюдо по названию");
-            System.out.println("5.Выход из прилаги");
-            System.out.println("6.Сохранить данные файл");
+            System.out.println("5.Сохранить данные файл");
+            System.out.println("6.Закончить работу приложения");
             String num = reader.readLine();
             switch (num) {
                 case "1":
@@ -37,8 +38,10 @@ public class App {
                     String name = reader.readLine();
                     System.out.println(DishServiceImpl.getInstance().findDishByName(name));
                     break;
-                case "6":
+                case "5":
                     DishServiceImpl.getInstance().saveInFile();
+                case "6":
+                    break;
             }
         }
 
