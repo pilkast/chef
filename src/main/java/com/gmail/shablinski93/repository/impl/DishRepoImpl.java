@@ -1,7 +1,6 @@
 package com.gmail.shablinski93.repository.impl;
 
 import com.gmail.shablinski93.model.Dish;
-import com.gmail.shablinski93.model.DishIngredient;
 import com.gmail.shablinski93.model.Ingredient;
 import com.gmail.shablinski93.repository.DishRepository;
 import org.apache.logging.log4j.LogManager;
@@ -136,10 +135,6 @@ public class DishRepoImpl implements DishRepository {
         }
     }
 
-    @Override
-    public DishIngredient creatingDependence(Connection connection, DishIngredient dishIngredient, Dish dish, Ingredient ingredient) {
-        return null;
-    }
 
     @Override
     public List<Dish> getAllDish(Connection connection) {
