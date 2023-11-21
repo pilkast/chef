@@ -29,17 +29,6 @@ public class DishRepoImpl implements DishRepository {
 
     private static final String SELECT_FROM_INGREDIENTS_BY_ID = "SELECT * FROM ingredients WHERE ingredient_id = ?";
     private static final String SELECT_QUERRY_BY_DISH_NAME = "SELECT * FROM dish WHERE dishname = ?";
-    private static DishRepository instance;
-
-    private DishRepoImpl() {
-    }
-
-    public static DishRepository getInstance() {
-        if (instance == null) {
-            instance = new DishRepoImpl();
-        }
-        return instance;
-    }
 
     @Override
     public Dish addDish(Connection connection, Dish dish) {
@@ -78,7 +67,7 @@ public class DishRepoImpl implements DishRepository {
     }
 
     @Override
-    public List<Ingredient> addIngredientList(Connection connection, Dish dish) {
+    public Boolean addIngredientList(Connection connection, Dish dish) {
         try (PreparedStatement preparedStatement = connection.prepareStatement
                 (INSERT_QUERY_INGREDIENT)) {
             Iterator<Ingredient> iterator = dish.getIngredients().iterator();
@@ -90,7 +79,7 @@ public class DishRepoImpl implements DishRepository {
                 preparedStatement.addBatch();
                 preparedStatement.executeBatch();
             }
-            return null;
+            return true;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -101,11 +90,13 @@ public class DishRepoImpl implements DishRepository {
         try (PreparedStatement preparedStatement = connection.prepareStatement
                 (SELECT_FROM_INGREDIENTS_ID_FOR_DISH)) {
             preparedStatement.setString(1, dishId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            List<UUID> list = new ArrayList<>();
-            while (resultSet.next()) {
-                String item = resultSet.getString("main_ingredient_id");
-                list.add(UUID.fromString(item));
+            List<UUID> list;
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                list = new ArrayList<>();
+                while (resultSet.next()) {
+                    String item = resultSet.getString("main_ingredient_id");
+                    list.add(UUID.fromString(item));
+                }
             }
             return list;
 

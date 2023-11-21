@@ -15,6 +15,12 @@ public interface DishService {
 
     Dish findDishByName(String dishName);
 
+    List<Dish> sortDishByCalories();
+
+    public List<Dish> sortDishByIngredients();
+
+    List<Dish> sortDishByName();
+
     void saveInFile();
 }
 

@@ -15,22 +15,15 @@ import java.lang.invoke.MethodHandles;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DishServiceImpl implements DishService {
     private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
-    private static DishService instance;
     private final ConnectionRepository connectionRepository = ConnectionRepositoryImpl.getInstance();
-    private final DishRepository dishRepository = DishRepoImpl.getInstance();
-
-    public static DishService getInstance() {
-        if (instance == null) {
-            instance = new DishServiceImpl();
-        }
-        return instance;
-    }
-
+    private final DishRepository dishRepository = new DishRepoImpl();
 
     @Override
     public Dish createDish() throws IOException {
@@ -41,11 +34,11 @@ public class DishServiceImpl implements DishService {
         String name = reader.readLine();
         dish.setDishName(name);
 
-        System.out.println("Введите калорийность блюда: ");//rename
-        String сalories = reader.readLine();
-        dish.setCaloriesCount(Integer.valueOf(сalories));
+        System.out.println("Введите калорийность блюда: ");
+        String calories = reader.readLine();
+        dish.setCaloriesCount(Integer.valueOf(calories));
 
-        System.out.println("Введите количество ингредиентов блюда: ");//rename
+        System.out.println("Введите количество ингредиентов блюда: ");
         String ingredientCountString = reader.readLine();
         Integer ingredientCount = Integer.valueOf(ingredientCountString);
         dish.setIngredientCount(ingredientCount);
@@ -65,9 +58,7 @@ public class DishServiceImpl implements DishService {
             connection.commit();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
-            return null;
         }
-
         return dish;
     }
 
@@ -91,17 +82,15 @@ public class DishServiceImpl implements DishService {
 
     @Override
     public List<Dish> getAllDish() {
-        List<Dish> dishes;
+        List<Dish> dishes = new ArrayList<>();
         try (Connection connection = connectionRepository.getConnection()) {
             connection.setAutoCommit(false);
             dishes = dishRepository.getAllDish(connection);
             connection.commit();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
-            return null;
         }
         return dishes;
-
     }
 
     @Override
@@ -120,6 +109,52 @@ public class DishServiceImpl implements DishService {
             logger.error(e.getMessage(), e);
         }
         return dish;
+    }
+
+    @Override
+    public List<Dish> sortDishByCalories() {
+        List<Dish> allDish = new ArrayList<>();
+        try (Connection connection = connectionRepository.getConnection()) {
+            connection.setAutoCommit(false);
+            allDish = dishRepository.getAllDish(connection)
+                    .stream()
+                    .sorted(Comparator.comparing(Dish::getCaloriesCount))
+                    .collect(Collectors.toList());
+            connection.commit();
+        } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return allDish;
+    }
+
+    @Override
+    public List<Dish> sortDishByName() {
+        List<Dish> allDish = new ArrayList<>();
+        try (Connection connection = connectionRepository.getConnection()) {
+            connection.setAutoCommit(false);
+            allDish = dishRepository.getAllDish(connection)
+                    .stream().sorted(Comparator.comparing(Dish::getDishName))
+                    .collect(Collectors.toList());
+            connection.commit();
+        } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return allDish;
+    }
+
+    @Override
+    public List<Dish> sortDishByIngredients() {
+        List<Dish> allDish = new ArrayList<>();
+        try (Connection connection = connectionRepository.getConnection()) {
+            connection.setAutoCommit(false);
+            allDish = dishRepository.getAllDish(connection)
+                    .stream().sorted(Comparator.comparing(Dish::getDishName))
+                    .collect(Collectors.toList());
+            connection.commit();
+        } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return allDish;
     }
 
     @Override
@@ -149,6 +184,4 @@ public class DishServiceImpl implements DishService {
             throw new RuntimeException(e);
         }
     }
-
-
 }

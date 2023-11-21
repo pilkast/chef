@@ -1,30 +1,73 @@
 package com.gmail.shablinski93.model;
 
-import lombok.*;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@EqualsAndHashCode
-@Entity
-@Table(name = "ingredients")
 public class Ingredient implements Serializable {
-    @Id
+
     private UUID ingredientId;
     private String ingredientName;
     private Integer ingredientCalories;
 
-    @ManyToMany(mappedBy = "ingredients")
-    List<Dish> dishes = new ArrayList<Dish>();
+    List<Dish> dishes = new ArrayList<>();
+
+    public Ingredient() {
+    }
+
+    public UUID getIngredientId() {
+        return ingredientId;
+    }
+
+    public void setIngredientId(UUID ingredientId) {
+        this.ingredientId = ingredientId;
+    }
+
+    public String getIngredientName() {
+        return ingredientName;
+    }
+
+    public void setIngredientName(String ingredientName) {
+        this.ingredientName = ingredientName;
+    }
+
+    public Integer getIngredientCalories() {
+        return ingredientCalories;
+    }
+
+    public void setIngredientCalories(Integer ingredientCalories) {
+        this.ingredientCalories = ingredientCalories;
+    }
+
+    public List<Dish> getDishes() {
+        return dishes;
+    }
+
+    public void setDishes(List<Dish> dishes) {
+        this.dishes = dishes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ingredient that = (Ingredient) o;
+        return Objects.equals(ingredientId, that.ingredientId) && Objects.equals(ingredientName, that.ingredientName) && Objects.equals(ingredientCalories, that.ingredientCalories) && Objects.equals(dishes, that.dishes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ingredientId, ingredientName, ingredientCalories, dishes);
+    }
+
+    @Override
+    public String toString() {
+        return "Ingredient:" +
+                "ingredientId=" + ingredientId +
+                ", ingredientName='" + ingredientName + '\'' +
+                ", ingredientCalories=" + ingredientCalories;
+    }
 }

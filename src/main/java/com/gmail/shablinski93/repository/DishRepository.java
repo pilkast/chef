@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface DishRepository {
     Dish addDish(Connection connection, Dish dish);
 
-    List<Ingredient> addIngredientList(Connection connection, Dish dish);
+    Boolean addIngredientList(Connection connection, Dish dish);
 
     List<UUID> getIngredientsIdForDish(Connection connection, String dishId);
 

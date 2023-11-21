@@ -47,6 +47,5 @@ public class ConnectionRepositoryImpl implements ConnectionRepository {
             logger.error(e.getMessage(), e);
             throw new IllegalStateException(e);
         }
-
     }
 }
