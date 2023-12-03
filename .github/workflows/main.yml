@@ -24,9 +24,10 @@ jobs:
 #     Set global environment variables:
       - name: set global env
         id: global_env
-        run: |
-          echo "::set-output name=CHEFF_APP::${GITHUB_REPOSITORY#*/}"
-          echo "::set-output name=DOCKERHUB_CHEFF_APP::docker.pkg.github.com/${GITHUB_REPOSITORY}/${GITHUB_REPOSITORY#*/}"
+      - name: Set output
+        run: echo "{CHEFF_APP}={GITHUB_REPOSITORY#*/}" >> $GITHUB_OUTPUT
+      - name: Set output
+        run: echo "{DOCKERHUB_CHEFF_APP}={docker.pkg.github.com/${GITHUB_REPOSITORY}/${GITHUB_REPOSITORY#*/}}" >> $GITHUB_OUTPUT
 
 #     Build Docker image:
       - name: Build and tag image
