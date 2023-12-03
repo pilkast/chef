@@ -17,10 +17,13 @@ jobs:
           persist-credentials: false
 
       - name: Install
-        run: npm install
+        run: mvn install
         
-      - name: Build
-        run: npm run build
+      - name: Compile
+        run: npm compile
+
+      - name: Deploy
+        run: npm deploy
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@3.7.1
