@@ -31,7 +31,7 @@ jobs:
 #     Build Docker image:
       - name: Build and tag image
         run: |
-          docker build -t "${{ steps.global_env.outputs.DOCKERHUB_CHEFF_APP }}:latest" -t "${{ steps.global_env.outputs.DOCKERHUB_CHEFF_APP }}:${GITHUB_SHA::8}" .
+          docker build --tag "${{ steps.global_env.outputs.DOCKERHUB_CHEFF_APP }}:latest" --tag "${{ steps.global_env.outputs.DOCKERHUB_CHEFF_APP }}:${GITHUB_SHA::8}" .
 
       - name: Docker login
         run: docker login docker.pkg.github.com -u $GITHUB_ACTOR -p ${{secrets.CHEFF_CI}}
