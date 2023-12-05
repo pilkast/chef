@@ -7,11 +7,8 @@ import com.gmail.shablinski93.repository.DishRepository;
 import com.gmail.shablinski93.repository.impl.ConnectionRepositoryImpl;
 import com.gmail.shablinski93.repository.impl.DishRepoImpl;
 import com.gmail.shablinski93.service.DishService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.*;
-import java.lang.invoke.MethodHandles;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,12 +18,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DishServiceImpl implements DishService {
-    private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
     private final ConnectionRepository connectionRepository = ConnectionRepositoryImpl.getInstance();
     private final DishRepository dishRepository = new DishRepoImpl();
 
     @Override
-    public Dish createDish() throws IOException {
+    public Dish createDish() throws IOException, SQLException {
         Dish dish = new Dish();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -52,13 +48,10 @@ public class DishServiceImpl implements DishService {
 
         dish.setIngredients(ingredients);
 
-        try (Connection connection = connectionRepository.getConnection()) {
-            connection.setAutoCommit(false);
-            dishRepository.addDish(connection, dish);
-            connection.commit();
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-        }
+        Connection connection = connectionRepository.getConnection();
+        connection.setAutoCommit(false);
+        dishRepository.addDish(connection, dish);
+        connection.commit();
         return dish;
     }
 
@@ -81,107 +74,73 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public List<Dish> getAllDish() {
-        List<Dish> dishes = new ArrayList<>();
-        try (Connection connection = connectionRepository.getConnection()) {
-            connection.setAutoCommit(false);
-            dishes = dishRepository.getAllDish(connection);
-            connection.commit();
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-        }
-        return dishes;
+    public List<String> getAllDishesNames() throws SQLException {
+        Connection connection = connectionRepository.getConnection();
+        connection.setAutoCommit(false);
+        List<Dish> dishes = dishRepository.getAllDish(connection);
+        List<String> dishNames = dishes.stream().map(Dish::getDishName).collect(Collectors.toList());
+        connection.commit();
+        return dishNames;
     }
 
     @Override
-    public Dish findDishByName(String dishName) {
+    public Dish findDishByName(String dishName) throws SQLException {
         Dish dish = new Dish();
-        try (Connection connection = connectionRepository.getConnection()) {
-            connection.setAutoCommit(false);
-            dish = dishRepository.getDishByName(connection, dishName);
+        Connection connection = connectionRepository.getConnection();
+        connection.setAutoCommit(false);
+        dish = dishRepository.getDishByName(connection, dishName);
 
-            List<UUID> ingredientsIdForDish = dishRepository.getIngredientsIdForDish(connection, dish.getDishId().toString());
-            List<Ingredient> ingredientsByIdForDish = dishRepository.getIngredientsByIdForDish(connection, ingredientsIdForDish);
-            dish.setIngredients(ingredientsByIdForDish);
-
-            connection.commit();
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-        }
+        List<UUID> ingredientsIdForDish = dishRepository.getIngredientsIdForDish(connection, dish.getDishId().toString());
+        List<Ingredient> ingredientsByIdForDish = dishRepository.getIngredientsByIdForDish(connection, ingredientsIdForDish);
+        dish.setIngredients(ingredientsByIdForDish);
+        connection.commit();
         return dish;
     }
 
     @Override
-    public List<Dish> sortDishByCalories() {
+    public List<Dish> sortDishByCalories() throws SQLException {
         List<Dish> allDish = new ArrayList<>();
-        try (Connection connection = connectionRepository.getConnection()) {
-            connection.setAutoCommit(false);
-            allDish = dishRepository.getAllDish(connection)
-                    .stream()
-                    .sorted(Comparator.comparing(Dish::getCaloriesCount))
-                    .collect(Collectors.toList());
-            connection.commit();
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-        }
+        Connection connection = connectionRepository.getConnection();
+        connection.setAutoCommit(false);
+        allDish = dishRepository.getAllDish(connection)
+                .stream()
+                .sorted(Comparator.comparing(Dish::getCaloriesCount))
+                .collect(Collectors.toList());
+        connection.commit();
         return allDish;
     }
 
     @Override
-    public List<Dish> sortDishByName() {
+    public List<Dish> sortDishByName() throws SQLException {
         List<Dish> allDish = new ArrayList<>();
-        try (Connection connection = connectionRepository.getConnection()) {
-            connection.setAutoCommit(false);
-            allDish = dishRepository.getAllDish(connection)
-                    .stream().sorted(Comparator.comparing(Dish::getDishName))
-                    .collect(Collectors.toList());
-            connection.commit();
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-        }
+        Connection connection = connectionRepository.getConnection();
+        connection.setAutoCommit(false);
+        allDish = dishRepository.getAllDish(connection)
+                .stream()
+                .sorted(Comparator.comparing(Dish::getDishName))
+                .collect(Collectors.toList());
+        connection.commit();
         return allDish;
     }
 
     @Override
-    public List<Dish> sortDishByIngredients() {
-        List<Dish> allDish = new ArrayList<>();
-        try (Connection connection = connectionRepository.getConnection()) {
-            connection.setAutoCommit(false);
-            allDish = dishRepository.getAllDish(connection)
-                    .stream().sorted(Comparator.comparing(Dish::getDishName))
-                    .collect(Collectors.toList());
-            connection.commit();
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-        }
-        return allDish;
-    }
-
-    @Override
-    public void saveInFile() {
+    public void saveInFile() throws IOException, SQLException {
         createFileWithInfoFromDb();
-        try {
-            FileOutputStream fos = new FileOutputStream("all-info.txt");
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            List<Dish> allDish = getAllDish();
-            oos.writeObject(allDish);
-            oos.flush();
-            oos.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        FileOutputStream fos = new FileOutputStream("all-info.txt");
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        List<String> allDish = getAllDishesNames();
+        oos.writeObject(allDish);
+        oos.flush();
+        oos.close();
     }
 
-    private void createFileWithInfoFromDb() {
-        try {
-            File file = new File("all-info.txt");
-            if (file.createNewFile()) {
-                System.out.println("Файл создан");
-            } else {
-                System.out.println("Файл уже существует");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private void createFileWithInfoFromDb() throws IOException {
+
+        File file = new File("all-info.txt");
+        if (file.createNewFile()) {
+            System.out.println("Файл создан");
+        } else {
+            System.out.println("Файл уже существует");
         }
     }
 }

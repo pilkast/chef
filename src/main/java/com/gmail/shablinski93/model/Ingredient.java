@@ -6,17 +6,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-
 public class Ingredient implements Serializable {
-
     private UUID ingredientId;
     private String ingredientName;
     private Integer ingredientCalories;
 
     List<Dish> dishes = new ArrayList<>();
-
-    public Ingredient() {
-    }
 
     public UUID getIngredientId() {
         return ingredientId;
@@ -66,8 +61,7 @@ public class Ingredient implements Serializable {
     @Override
     public String toString() {
         return "Ingredient:" +
-                "ingredientId=" + ingredientId +
-                ", ingredientName='" + ingredientName + '\'' +
+                "ingredientName='" + ingredientName + '\'' +
                 ", ingredientCalories=" + ingredientCalories;
     }
 }

@@ -4,23 +4,21 @@ import com.gmail.shablinski93.model.Dish;
 import com.gmail.shablinski93.model.Ingredient;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface DishService {
-    Dish createDish() throws IOException;
+    Dish createDish() throws IOException, SQLException;
 
     Ingredient createIngredient() throws IOException;
 
-    List<Dish> getAllDish();
+    List<String> getAllDishesNames() throws SQLException;
 
-    Dish findDishByName(String dishName);
+    Dish findDishByName(String dishName) throws SQLException;
 
-    List<Dish> sortDishByCalories();
+    List<Dish> sortDishByCalories() throws SQLException;
 
-    public List<Dish> sortDishByIngredients();
+    List<Dish> sortDishByName() throws SQLException;
 
-    List<Dish> sortDishByName();
-
-    void saveInFile();
+    void saveInFile() throws IOException, SQLException;
 }
-

@@ -5,12 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Dish implements Serializable {
-
-    public Dish() {
-    }
-
     private UUID dishId;
     private String dishName;
     private Integer caloriesCount;
@@ -73,11 +70,6 @@ public class Dish implements Serializable {
 
     @Override
     public String toString() {
-        return "Dish:" +
-                "dishId=" + dishId +
-                ", dishName='" + dishName + '\'' +
-                ", caloriesCount=" + caloriesCount +
-                ", ingredientCount=" + ingredientCount +
-                ", ingredients=" + ingredients;
+        return "Dish:" + "dishName='" + dishName + '\'' + ", caloriesCount=" + caloriesCount + ", ingredientCount=" + ingredientCount + ", ingredients=" + ingredients.stream().map(Objects::toString).collect(Collectors.toList());
     }
 }
