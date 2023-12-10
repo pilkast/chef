@@ -3,22 +3,20 @@ package com.gmail.shablinski93.service;
 import com.gmail.shablinski93.model.Dish;
 import com.gmail.shablinski93.model.Ingredient;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 public interface DishService {
-    Dish createDish() throws IOException, SQLException;
+    Dish createDish();
 
-    Ingredient createIngredient() throws IOException;
+    Ingredient createIngredient();
 
-    List<String> getAllDishesNames() throws SQLException;
+    List<String> getAllDishesNames();
 
-    Dish findDishByName(String dishName) throws SQLException;
+    Dish findDishByName(String dishName);
 
-    List<Dish> sortDishByCalories() throws SQLException;
+    List<Dish> sortDishByCalories();
 
-    List<Dish> sortDishByName() throws SQLException;
+    List<Dish> sortDishByName();
 
-    void saveInFile() throws IOException, SQLException;
+    void saveInFile();
 }

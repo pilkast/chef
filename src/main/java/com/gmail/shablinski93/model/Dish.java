@@ -12,7 +12,6 @@ public class Dish implements Serializable {
     private String dishName;
     private Integer caloriesCount;
     private Integer ingredientCount;
-
     List<Ingredient> ingredients = new ArrayList<Ingredient>();
 
     public UUID getDishId() {
@@ -70,6 +69,9 @@ public class Dish implements Serializable {
 
     @Override
     public String toString() {
-        return "Dish:" + "dishName='" + dishName + '\'' + ", caloriesCount=" + caloriesCount + ", ingredientCount=" + ingredientCount + ", ingredients=" + ingredients.stream().map(Objects::toString).collect(Collectors.toList());
+        return "Dish:" + "dishName='" + dishName + '\'' +
+                ", caloriesCount=" + caloriesCount +
+                ", ingredientCount=" + ingredientCount + ", " +
+                "ingredients=" + ingredients.stream().map(Objects::toString).collect(Collectors.joining());
     }
 }

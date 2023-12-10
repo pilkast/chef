@@ -10,7 +10,6 @@ public class Ingredient implements Serializable {
     private UUID ingredientId;
     private String ingredientName;
     private Integer ingredientCalories;
-
     List<Dish> dishes = new ArrayList<>();
 
     public UUID getIngredientId() {

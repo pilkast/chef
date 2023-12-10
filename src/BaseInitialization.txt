@@ -1,0 +1,3 @@
+create table if not exists dish(dish_id varchar not null constraint dish_pk primary key, dishname varchar, caloriescount integer, ingredientcount integer)
+create table if not exists ingredients(ingredient_id varchar not null constraint ingredients_pk primary key, ingredient_name varchar,ingredient_calories integer)
+create table if not exists dish_ingredient(main_dish_id varchar constraint dish_ingredient_dish_null_fk references dish, main_ingredient_id varchar constraint dish_ingredient_ingredients_null_fk references ingredients)
