@@ -62,9 +62,9 @@ public class DishServiceImpl implements DishService {
             dishRepository.addDish(connection, dish);
             connection.commit();
         } catch (IOException e) {
-            throw new DataReaderException();
+            throw new DataReaderException(e);
         } catch (SQLException e) {
-            throw new ConnectionException();
+            throw new ConnectionException(e);
         }
         return dish;
     }
@@ -85,7 +85,7 @@ public class DishServiceImpl implements DishService {
             ingredient.setIngredientCalories(Integer.valueOf(approvedIngredientCalories));
             ingredient.setIngredientId(UUID.randomUUID());
         } catch (IOException ex) {
-            throw new DataReaderException();
+            throw new DataReaderException(ex);
         }
         return ingredient;
     }
@@ -98,7 +98,7 @@ public class DishServiceImpl implements DishService {
             connection.setAutoCommit(false);
             dishes = dishRepository.getAllDish(connection);
         } catch (SQLException e) {
-            throw new ConnectionException();
+            throw new ConnectionException(e);
         }
         return dishes.stream().map(Dish::getDishName).collect(Collectors.toList());
     }
@@ -116,7 +116,7 @@ public class DishServiceImpl implements DishService {
             List<Ingredient> ingredientsByIdForDish = dishRepository.getIngredientsByIdForDish(connection, ingredientsIdForDish);
             dish.setIngredients(ingredientsByIdForDish);
         } catch (SQLException e) {
-            throw new ConnectionException();
+            throw new ConnectionException(e);
         } catch (NullPointerException e) {
             System.out.println("Dish not exist. Please, try again");
         }
@@ -135,7 +135,7 @@ public class DishServiceImpl implements DishService {
                     .collect(Collectors.toList());
             return allDish;
         } catch (SQLException e) {
-            throw new ConnectionException();
+            throw new ConnectionException(e);
         }
     }
 
@@ -150,7 +150,7 @@ public class DishServiceImpl implements DishService {
                     .sorted(Comparator.comparing(Dish::getDishName))
                     .collect(Collectors.toList());
         } catch (SQLException e) {
-            throw new ConnectionException();
+            throw new ConnectionException(e);
         }
         return allDish;
     }
@@ -167,7 +167,7 @@ public class DishServiceImpl implements DishService {
             oos.flush();
             oos.close();
         } catch (IOException e) {
-            throw new DataReaderException();
+            throw new DataReaderException(e);
         }
     }
 
@@ -180,7 +180,7 @@ public class DishServiceImpl implements DishService {
                 System.out.println("Файл уже существует");
             }
         } catch (IOException e) {
-            throw new DataReaderException();
+            throw new DataReaderException(e);
         }
     }
 
@@ -192,7 +192,7 @@ public class DishServiceImpl implements DishService {
                 name = reader.readLine();
             }
         } catch (IOException e) {
-            throw new DataReaderException();
+            throw new DataReaderException(e);
         }
         return name;
     }

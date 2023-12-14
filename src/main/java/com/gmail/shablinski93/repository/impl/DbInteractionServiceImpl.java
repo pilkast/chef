@@ -17,7 +17,7 @@ public class DbInteractionServiceImpl implements DbInteractionService {
             preparedStatement.setString(paramIndex, paramData);
             resultSet = preparedStatement.executeQuery();
         } catch (SQLException e) {
-            throw new SqlExceptionRepo();
+            throw new SqlExceptionRepo(e);
         }
         return resultSet;
     }
@@ -29,7 +29,7 @@ public class DbInteractionServiceImpl implements DbInteractionService {
             PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
             resultSet = preparedStatement.executeQuery();
         } catch (SQLException e) {
-            throw new SqlExceptionRepo();
+            throw new SqlExceptionRepo(e);
         }
         return resultSet;
     }

@@ -39,7 +39,7 @@ public class DishRepoImpl implements DishRepository {
             addIngredientList(connection, dish);
             addDishIdAndIngredientId(connection, dish);
         } catch (SQLException e) {
-            throw new SqlExceptionRepo();
+            throw new SqlExceptionRepo(e);
         }
         return dish;
     }
@@ -55,7 +55,7 @@ public class DishRepoImpl implements DishRepository {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new SqlExceptionRepo();
+            throw new SqlExceptionRepo(e);
         }
     }
 
@@ -71,7 +71,7 @@ public class DishRepoImpl implements DishRepository {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new SqlExceptionRepo();
+            throw new SqlExceptionRepo(e);
         }
     }
 
@@ -85,7 +85,7 @@ public class DishRepoImpl implements DishRepository {
                 String item = resultSet.getString("main_ingredient_id");
                 list.add(UUID.fromString(item));
             } catch (SQLException e) {
-                throw new SqlExceptionRepo();
+                throw new SqlExceptionRepo(e);
             }
         }
         return list;
@@ -131,7 +131,7 @@ public class DishRepoImpl implements DishRepository {
                 dish.setIngredientCount(resultSet.getInt("ingredientcount"));
                 dishes.add(dish);
             } catch (SQLException e) {
-                throw new SqlExceptionRepo();
+                throw new SqlExceptionRepo(e);
             }
         }
         return dishes;
@@ -147,7 +147,7 @@ public class DishRepoImpl implements DishRepository {
                 ingredient.setIngredientName(resultSet.getString("ingredient_name"));
                 ingredient.setIngredientCalories(resultSet.getInt("ingredient_calories"));
             } catch (SQLException e) {
-                throw new SqlExceptionRepo();
+                throw new SqlExceptionRepo(e);
             }
         }
         return ingredient;
