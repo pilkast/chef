@@ -2,153 +2,117 @@ package com.gmail.shablinski93.service.impl;
 
 import com.gmail.shablinski93.model.Dish;
 import com.gmail.shablinski93.model.Ingredient;
-import com.gmail.shablinski93.repository.ConnectionRepository;
 import com.gmail.shablinski93.repository.DishRepository;
-import com.gmail.shablinski93.repository.impl.ConnectionRepositoryImpl;
 import com.gmail.shablinski93.repository.impl.DishRepoImpl;
+import com.gmail.shablinski93.service.DataIterationService;
 import com.gmail.shablinski93.service.DishService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.io.*;
-import java.lang.invoke.MethodHandles;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DishServiceImpl implements DishService {
-    private static final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
-    private static DishService instance;
-    private final ConnectionRepository connectionRepository = ConnectionRepositoryImpl.getInstance();
-    private final DishRepository dishRepository = DishRepoImpl.getInstance();
-
-    public static DishService getInstance() {
-        if (instance == null) {
-            instance = new DishServiceImpl();
-        }
-        return instance;
-    }
-
+    private final DishRepository dishRepository = new DishRepoImpl();
+    private final DataIterationService dataIterationService = new DataIterationServiceImpl();
+    private static final String REGEX_LETTERS = "^[A-Za-z]+";
+    private static final String REGEX_NUMBERS = "^[0-9]*$";
+    public static final String ERROR_MESSAGE_DISH_NAME = "Ошибка. Введите наименование блюда снова:";
+    public static final String ERROR_MESSAGE_CALORIES = "Ошибка. Введите кол-во калорий снова:";
+    public static final String ERROR_MESSAGE_INGREDIENTS_COUNT = "Ошибка. Введите кол-во ингредиентов снова:";
+    public static final String ERROR_MESSAGE_INGREDIENT_NAME = "Ошибка. Введите название ингредиента снова:";
+    public static final String ERROR_MESSAGE_INGREDIENT_CALORIES = "Ошибка. Введите калорийность ингредиента снова:";
 
     @Override
-    public Dish createDish() throws IOException {
+    public Dish createDish() {
         Dish dish = new Dish();
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите наименование блюда: ");
-        String name = reader.readLine();
-        dish.setDishName(name);
+        String name = dataIterationService.lineReader();
+        String approvedDishName = inputIsValid(name, ERROR_MESSAGE_DISH_NAME, REGEX_LETTERS);
+        dish.setDishName(approvedDishName);
 
-        System.out.println("Введите калорийность блюда: ");//rename
-        String сalories = reader.readLine();
-        dish.setCaloriesCount(Integer.valueOf(сalories));
+        System.out.println("Введите калорийность блюда: ");
+        String calories = dataIterationService.lineReader();
+        String approvedCaloriesInput = inputIsValid(calories, ERROR_MESSAGE_CALORIES, REGEX_NUMBERS);
+        dish.setCaloriesCount(Integer.valueOf(approvedCaloriesInput));
 
-        System.out.println("Введите количество ингредиентов блюда: ");//rename
-        String ingredientCountString = reader.readLine();
-        Integer ingredientCount = Integer.valueOf(ingredientCountString);
-        dish.setIngredientCount(ingredientCount);
+        System.out.println("Введите количество ингредиентов блюда: ");
+        String ingredientCountString = dataIterationService.lineReader();
+        String approvedIngredientsCount = inputIsValid(ingredientCountString, ERROR_MESSAGE_INGREDIENTS_COUNT, REGEX_NUMBERS);
+        dish.setIngredientCount(Integer.valueOf(approvedIngredientsCount));
         dish.setDishId(UUID.randomUUID());
 
         List<Ingredient> ingredients = new ArrayList<Ingredient>();
-
-        for (int i = 0; i < ingredientCount; i++) {
+        for (int i = 0; i < Integer.valueOf(approvedIngredientsCount); i++) {
             ingredients.add(createIngredient());
         }
-
         dish.setIngredients(ingredients);
-
-        try (Connection connection = connectionRepository.getConnection()) {
-            connection.setAutoCommit(false);
-            dishRepository.addDish(connection, dish);
-            connection.commit();
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
-
+        dishRepository.addDish(dish);
         return dish;
     }
 
-
     @Override
-    public Ingredient createIngredient() throws IOException {
+    public Ingredient createIngredient() {
         Ingredient ingredient = new Ingredient();
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Введите наименование ингредиент: ");
-        String name = reader.readLine();
-        ingredient.setIngredientName(name);
+        System.out.println("Введите наименование ингредиента: ");
+        String name = dataIterationService.lineReader();
+        String approvedIngredientName = inputIsValid(name, ERROR_MESSAGE_INGREDIENT_NAME, REGEX_LETTERS);
+        ingredient.setIngredientName(approvedIngredientName);
 
         System.out.println("Введите калорийность ингредиента: ");
-        String calories = reader.readLine();
-        ingredient.setIngredientCalories(Integer.valueOf(calories));
-
+        String calories = dataIterationService.lineReader();
+        String approvedIngredientCalories = inputIsValid(calories, ERROR_MESSAGE_INGREDIENT_CALORIES, REGEX_NUMBERS);
+        ingredient.setIngredientCalories(Integer.valueOf(approvedIngredientCalories));
         ingredient.setIngredientId(UUID.randomUUID());
         return ingredient;
     }
 
     @Override
-    public List<Dish> getAllDish() {
-        List<Dish> dishes;
-        try (Connection connection = connectionRepository.getConnection()) {
-            connection.setAutoCommit(false);
-            dishes = dishRepository.getAllDish(connection);
-            connection.commit();
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
-        return dishes;
-
+    public List<String> getAllDishesNames() {
+        List<Dish> dishes = dishRepository.getAllDish();
+        return dishes.stream().map(Dish::getDishName).collect(Collectors.toList());
     }
 
     @Override
     public Dish findDishByName(String dishName) {
-        Dish dish = new Dish();
-        try (Connection connection = connectionRepository.getConnection()) {
-            connection.setAutoCommit(false);
-            dish = dishRepository.getDishByName(connection, dishName);
+        String validDishName = inputIsValid(dishName, ERROR_MESSAGE_DISH_NAME, REGEX_LETTERS);
+        Dish dish = dishRepository.getDishByName(validDishName);
 
-            List<UUID> ingredientsIdForDish = dishRepository.getIngredientsIdForDish(connection, dish.getDishId().toString());
-            List<Ingredient> ingredientsByIdForDish = dishRepository.getIngredientsByIdForDish(connection, ingredientsIdForDish);
-            dish.setIngredients(ingredientsByIdForDish);
-
-            connection.commit();
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-        }
+        List<UUID> ingredientsIdForDish = dishRepository.getIngredientsIdForDish(dish.getDishId().toString());
+        List<Ingredient> ingredientsByIdForDish = dishRepository.getIngredientsByIdForDish(ingredientsIdForDish);
+        dish.setIngredients(ingredientsByIdForDish);
         return dish;
     }
 
     @Override
+    public List<Dish> sortDishByCalories() {
+        return dishRepository.getAllDish()
+                .stream()
+                .sorted(Comparator.comparing(Dish::getCaloriesCount))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Dish> sortDishByName() {
+        return dishRepository.getAllDish()
+                .stream()
+                .sorted(Comparator.comparing(Dish::getDishName))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void saveInFile() {
-        createFileWithInfoFromDb();
-        try {
-            FileOutputStream fos = new FileOutputStream("all-info.txt");
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            List<Dish> allDish = getAllDish();
-            oos.writeObject(allDish);
-            oos.flush();
-            oos.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        dataIterationService.createFileWithInfoFromDb("all-info.txt");
+        List<String> allDish = getAllDishesNames();
+        dataIterationService.saveInFile("all-info.txt", allDish);
     }
 
-    private void createFileWithInfoFromDb() {
-        try {
-            File file = new File("all-info.txt");
-            if (file.createNewFile()) {
-                System.out.println("Файл создан");
-            } else {
-                System.out.println("Файл уже существует");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private String inputIsValid(String name, String errorMessage, String regex) {
+        while (name == null || name.isBlank() || name.length() > 20 || !name.matches(regex)) {
+            System.out.println(errorMessage);
+            name = dataIterationService.lineReader();
         }
+        return name;
     }
-
-
 }
