@@ -3,20 +3,19 @@ package com.gmail.shablinski93.repository;
 import com.gmail.shablinski93.model.Dish;
 import com.gmail.shablinski93.model.Ingredient;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.UUID;
 
 public interface DishRepository {
-    Dish addDish(Connection connection, Dish dish);
+    Dish addDish(Dish dish);
 
-    void addIngredientList(Connection connection, Dish dish);
+    void addIngredientList(Dish dish);
 
-    List<UUID> getIngredientsIdForDish(Connection connection, String dishId);
+    List<UUID> getIngredientsIdForDish(String dishId);
 
-    List<Ingredient> getIngredientsByIdForDish(Connection connection, List<UUID> ingredientsIdForDish);
+    List<Ingredient> getIngredientsByIdForDish(List<UUID> ingredientsIdForDish);
 
-    List<Dish> getAllDish(Connection connection);
+    List<Dish> getAllDish();
 
-    Dish getDishByName(Connection connection, String dishName);
+    Dish getDishByName(String dishName);
 }

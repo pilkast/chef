@@ -61,6 +61,6 @@ public class Ingredient implements Serializable {
     public String toString() {
         return "Ingredient:" +
                 "ingredientName='" + ingredientName + '\'' +
-                ", ingredientCalories=" + ingredientCalories;
+                ", ingredientCalories=" + ingredientCalories + '\'';
     }
 }
